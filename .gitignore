@@ -1,3 +1,4 @@
+# OS / IDE
 .DS_Store
 .vscode/
 .idea/
@@ -8,11 +9,15 @@ __pycache__/
 *.pyc
 *.pyo
 
-# 数据与中间产物（根据你的项目）
-data/raw/
-data/processed/
-data/features/
-data/images/
+# Experiments & models
 runs/
 *.pt
 *.npz
+
+# Datasets & artifacts
+multimodal_recsys/data/
+data/
+*.parquet
+*.jsonl
+*.jsonl.gz
+*.gz
