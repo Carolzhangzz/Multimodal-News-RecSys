@@ -21,3 +21,10 @@ data/
 *.jsonl
 *.jsonl.gz
 *.gz
+# data/artifacts
+data/
+results/
+runs/
+*.pt
+*.npz
+*.parquet
