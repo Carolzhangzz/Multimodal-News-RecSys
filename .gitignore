@@ -1,0 +1,18 @@
+.DS_Store
+.vscode/
+.idea/
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+
+# 数据与中间产物（根据你的项目）
+data/raw/
+data/processed/
+data/features/
+data/images/
+runs/
+*.pt
+*.npz
