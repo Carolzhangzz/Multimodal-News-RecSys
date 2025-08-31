@@ -1,5 +1,6 @@
 import argparse, ast, json, os, gzip
 import pandas as pd
+from typing import Optional, List
 
 def load_any(path):
     if path.endswith(".parquet"):
@@ -29,21 +30,50 @@ def to_list(x):
             return [x]
     return [] if pd.isna(x) else [x]
 
+IMG_KEYS_META = ("hi_res", "large", "thumb")  # 元数据 images 常见键
+IMG_KEYS_REVIEW = ("large_image_url", "medium_image_url", "small_image_url")  # 评论 images 常见键
+IMG_KEYS_FALLBACK = ("url", "image_url", "link")  # 有些条目用通用键
+
+def _norm_url(u: str) -> str:
+    u = u.strip()
+    if u.startswith("http://"):  # 统一 https，少踩 301/阻断
+        u = "https://" + u[len("http://"):]
+    return u
+
 def extract_image_urls(img_field):
     urls = []
     for it in to_list(img_field):
         if isinstance(it, dict):
-            for k in ("hi_res","large","thumb"):
+            # 元数据风格
+            for k in IMG_KEYS_META:
                 u = it.get(k)
-                if isinstance(u, str): urls.append(u)
-        elif isinstance(it, str):
+                if isinstance(u, str) and u: urls.append(u)
+            # 评论风格
+            for k in IMG_KEYS_REVIEW:
+                u = it.get(k)
+                if isinstance(u, str) and u: urls.append(u)
+            # 兜底
+            for k in IMG_KEYS_FALLBACK:
+                u = it.get(k)
+                if isinstance(u, str) and u: urls.append(u)
+        elif isinstance(it, str) and it:
             urls.append(it)
-    # 去重保序
-    seen=set(); out=[]
+    # 规范化 + 去重保序
+    seen, out = set(), []
     for u in urls:
-        if u not in seen:
+        u = _norm_url(u)
+        if u and u not in seen:
             seen.add(u); out.append(u)
     return out
+
+def pick_primary_image(urls: list[str]) -> Optional[str]:
+    if not urls: return None
+    # 简单启发：优先含 "SL1600" / "1600" / "hi_res"/"large" 的 URL
+    prefs = ("SL1600", "_1600_", "hi_res", "large")
+    for u in urls:
+        if any(p.lower() in u.lower() for p in prefs):
+            return u
+    return urls[0]
 
 def main(args):
     print("==> Loading")
@@ -65,6 +95,9 @@ def main(args):
         "title": title, "description": desc, "price": price,
         "category": category, "images_raw": images
     })
+
+    items["image_urls"] = items["images_raw"].apply(extract_image_urls)
+    items["image_url_primary"] = items["image_urls"].apply(pick_primary_image)
 
     # 类目转文本
     def cat_str(x):
