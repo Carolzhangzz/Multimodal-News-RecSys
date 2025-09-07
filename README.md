@@ -4,7 +4,7 @@
 
 ---
 
-![Uploading image.png…]()
+
 
 ## 1) What this project is
 
