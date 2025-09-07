@@ -4,6 +4,8 @@
 
 ---
 
+![Uploading image.png…]()
+
 ## 1) What this project is
 
 - **Goal.** Study **cold-start** (especially new items) on Amazon Reviews’23 **Amazon_Fashion**.
