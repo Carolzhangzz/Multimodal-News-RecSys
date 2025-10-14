@@ -4,7 +4,7 @@
 
 ---
 
-![arch_system_design](https://github.com/Carolzhangzz/Multimodal-News-RecSys/assets/1234567890/abcd1234efgh5678)
+![arch_system_design](https://github.com/Carolzhangzz/Multimodal-News-RecSys/multimodal.jpg)
 
 ## 1) What this project is
 
